@@ -15,7 +15,7 @@ bot = Bot(token=API_TOKEN)
 
 def message_handler(update: Update, context: CallbackContext) -> None:
     info = update_to_dict(update)
-
+    print(info)
     # ===============
     # CHAT PROCESSING
     # ===============
