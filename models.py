@@ -17,8 +17,8 @@ class User:
     date_of_last_msg: datetime.datetime
 
     def __init__(self, **kwargs):
-        if len(kwargs) == 4:
-            self._id = None
+        if len(kwargs) == 5:
+            self._id = kwargs['_id']
             self.username = kwargs['username']
             self.first_name = kwargs['first_name']
             self.last_name = kwargs['last_name']
@@ -57,6 +57,10 @@ class User:
             self.__init__(document_id=self._id)
         else:
             raise Exception('new_values variable could not be None')
+
+    @staticmethod
+    def get_user_by_id(user_id: str):
+        return users_collection.find_one({'_id': user_id})
 
     def __dict__(self) -> dict:
         result_dict = {
