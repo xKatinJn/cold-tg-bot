@@ -4,11 +4,11 @@ from telegram import Update, error
 def update_to_dict(update: Update) -> dict:
     result = dict()
 
-    try:
+    if update.message.text:
         text = update.message.text
-        result.update({'message_text': text})
-    except error.BadRequest:
-        print("Message is NONE")
+    else:
+        text = 'None'
+    result.update({'message_text': text})
 
     chat = update.message.chat
     result.update({'chat': chat})
