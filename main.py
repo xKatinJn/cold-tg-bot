@@ -1,12 +1,14 @@
 import os
 import logging
+from random import choice
 from datetime import datetime
 
 from pprint import pprint
 
 from models import User
 from common_utils import update_to_dict, private_chat_to_user_model
-from messages_templates import USER_JOINED, USER_JOINED_WITHOUT_UN, WELCOMING_AND_TUTORING, OPTIONS_TEXTS
+from messages_templates import USER_JOINED, USER_JOINED_WITHOUT_UN, WELCOMING_AND_TUTORING, OPTIONS_TEXTS, \
+    MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS
 from keyboards import inline_info_keyboard
 
 from telegram import Bot, Update
@@ -35,11 +37,13 @@ def message_handler(update: Update, context: CallbackContext) -> None:
 
                 # welcoming new user in chat
                 if new_user_name:
-                    bot.send_message(info['chat']['id'], USER_JOINED.format(new_user_name))
+                    bot.send_message(info['chat']['id'],
+                                     USER_JOINED.format(new_user_name)+choice(USER_JOINED_ADDITIONS))
                 else:
                     new_user_name = new_user['first_name'] + ' ' \
                                     + new_user['last_name']
-                    bot.send_message(info['chat']['id'], USER_JOINED_WITHOUT_UN.format(new_user_name))
+                    bot.send_message(info['chat']['id'],
+                                     USER_JOINED_WITHOUT_UN.format(new_user_name)+choice(USER_JOINED_ADDITIONS))
 
     # ===========================
     # PRIVATE MESSAGES PROCESSING
@@ -58,14 +62,24 @@ def message_handler(update: Update, context: CallbackContext) -> None:
 
         # first join
         if info['message_text'] == '/start':
-            bot.send_message(info['chat']['id'], text=WELCOMING_AND_TUTORING, reply_markup=inline_info_keyboard)
+            bot.send_message(info['chat']['id'],
+                             text=WELCOMING_AND_TUTORING+QUESTIONS, reply_markup=inline_info_keyboard)
 
 
 def handle_query(update: Update, call: CallbackContext):
     callback_data = update.callback_query.data
 
-    bot.send_message(update.callback_query.from_user.id, text=OPTIONS_TEXTS[callback_data],
-                     reply_markup=inline_info_keyboard)
+    if callback_data in ['1', '2', '3', '4']:
+        bot.edit_message_text(
+            chat_id=update.callback_query.from_user.id,
+            message_id=update.callback_query.message.message_id,
+            text=OPTIONS_TEXTS[callback_data]+'\n'*3+MORE_QUESTIONS+QUESTIONS,
+            reply_markup=inline_info_keyboard
+        )
+        # bot.send_message(update.callback_query.from_user.id, text=OPTIONS_TEXTS[callback_data])
+        # bot.send_message(update.callback_query.from_user.id, text=MORE_QUESTIONS+QUESTIONS,
+        #                  reply_markup=inline_info_keyboard)
+
     print('cb data is ', callback_data)
 
 
