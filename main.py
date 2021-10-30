@@ -69,6 +69,7 @@ def message_handler(update: Update, context: CallbackContext) -> None:
 def handle_query(update: Update, call: CallbackContext):
     callback_data = update.callback_query.data
 
+    # changing message text by callback_data value
     if callback_data in ['1', '2', '3', '4']:
         bot.edit_message_text(
             chat_id=update.callback_query.from_user.id,
@@ -76,11 +77,6 @@ def handle_query(update: Update, call: CallbackContext):
             text=OPTIONS_TEXTS[callback_data]+'\n'*3+MORE_QUESTIONS+QUESTIONS,
             reply_markup=inline_info_keyboard
         )
-        # bot.send_message(update.callback_query.from_user.id, text=OPTIONS_TEXTS[callback_data])
-        # bot.send_message(update.callback_query.from_user.id, text=MORE_QUESTIONS+QUESTIONS,
-        #                  reply_markup=inline_info_keyboard)
-
-    print('cb data is ', callback_data)
 
 
 def start() -> None:
