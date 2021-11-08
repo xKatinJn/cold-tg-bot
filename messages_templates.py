@@ -27,3 +27,8 @@ OPTIONS_TEXTS = {'1': 'Цель проекта: \nПривлечение как 
                       'Благодаря (в том числе) инструментам Закаливания я создал себе здоровое красивое тело, '
                       'и научил этому сотни людей 😉👌'}
 BOT_COMMANDS = {'Команды бота:\n'}
+
+PHOTO_IDS = {'1': 'AgACAgIAAxkBAAOZYYlo5MGblYciKa7IGFAK6BEBO1cAAme4MRucb0lIgATgxg5rpoABAAMCAANtAAMiBA',
+             '2': 'AgACAgIAAxkBAAOaYYlpAZuxxg7EI15WotcfCplhsUMAAmi4MRucb0lI5girqil_WKgBAAMCAANzAAMiBA',
+             '3': 'AgACAgIAAxkBAAOdYYlpfof5oPxytaULPuaN-RSUfxoAAm24MRucb0lIZiYWMB-_1woBAAMCAAN5AAMiBA',
+             '4': 'AgACAgIAAxkBAAOcYYlpMzv_lktfFz7YygbmjtzRkUcAAmu4MRucb0lIpwqQ6CyKxv4BAAMCAANzAAMiBA'}

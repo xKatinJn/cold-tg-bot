@@ -8,10 +8,10 @@ from pprint import pprint
 from models import User
 from common_utils import update_to_dict, private_chat_to_user_model
 from messages_templates import USER_JOINED, USER_JOINED_WITHOUT_UN, WELCOMING_AND_TUTORING, OPTIONS_TEXTS, \
-    MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS
+    MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS, PHOTO_IDS
 from keyboards import inline_info_keyboard
 
-from telegram import Bot, Update
+from telegram import Bot, Update, InputMediaPhoto
 from telegram.ext import Updater, MessageHandler, CallbackContext, Filters, CallbackQueryHandler
 
 
@@ -62,8 +62,17 @@ def message_handler(update: Update, context: CallbackContext) -> None:
 
         # first join
         if info['message_text'] == '/start':
-            bot.send_message(info['chat']['id'],
-                             text=WELCOMING_AND_TUTORING+QUESTIONS, reply_markup=inline_info_keyboard)
+            photo = open(f'photos/zaglushka.jpg', 'rb').read()
+            input_photo = InputMediaPhoto(media=photo)
+
+            bot.send_photo(
+                chat_id=info['chat']['id'],
+                photo=photo,
+                caption=WELCOMING_AND_TUTORING+QUESTIONS,
+                reply_markup=inline_info_keyboard
+            )
+            # bot.send_message(info['chat']['id'],
+            #                  text=WELCOMING_AND_TUTORING+QUESTIONS, reply_markup=inline_info_keyboard)
 
 
 def handle_query(update: Update, call: CallbackContext):
@@ -71,11 +80,17 @@ def handle_query(update: Update, call: CallbackContext):
 
     # changing message text by callback_data value
     if callback_data in ['1', '2', '3', '4']:
-        bot.edit_message_text(
+        input_photo = InputMediaPhoto(media=PHOTO_IDS[callback_data], caption=MORE_QUESTIONS+'\n'*2+QUESTIONS)
+
+        bot.edit_message_media(
             chat_id=update.callback_query.from_user.id,
             message_id=update.callback_query.message.message_id,
-            text=OPTIONS_TEXTS[callback_data]+'\n'*3+MORE_QUESTIONS+QUESTIONS,
+            media=input_photo,
             reply_markup=inline_info_keyboard
+        )
+        bot.answerCallbackQuery(
+            callback_query_id=update.callback_query.id,
+            text='Ответ на вопрос на фото :)'
         )
 
 
