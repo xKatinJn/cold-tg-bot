@@ -5,7 +5,7 @@ def update_to_dict(update: Update) -> dict:
     result = dict()
 
     if update.message.text:
-        text = update.message.text
+        text = update.message.text.lower()
     else:
         text = 'None'
     result.update({'message_text': text})

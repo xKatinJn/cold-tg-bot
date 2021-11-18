@@ -9,7 +9,8 @@ from models import User
 from common_utils import update_to_dict, private_chat_to_user_model
 from messages_templates import USER_JOINED, USER_JOINED_WITHOUT_UN, WELCOMING_AND_TUTORING, OPTIONS_TEXTS, \
     MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS, PHOTO_IDS
-from keyboards import inline_info_keyboard
+from keyboards import inline_info_keyboard, main_keyboard
+from chatting import welcoming_self, about_project_self
 
 from telegram import Bot, Update, InputMediaPhoto
 from telegram.ext import Updater, MessageHandler, CallbackContext, Filters, CallbackQueryHandler
@@ -61,18 +62,12 @@ def message_handler(update: Update, context: CallbackContext) -> None:
             new_user.insert()
 
         # first join
-        if info['message_text'] == '/start':
-            photo = open(f'photos/zaglushka.jpg', 'rb').read()
-            input_photo = InputMediaPhoto(media=photo)
-
-            bot.send_photo(
-                chat_id=info['chat']['id'],
-                photo=photo,
-                caption=WELCOMING_AND_TUTORING+QUESTIONS,
-                reply_markup=inline_info_keyboard
-            )
-            # bot.send_message(info['chat']['id'],
-            #                  text=WELCOMING_AND_TUTORING+QUESTIONS, reply_markup=inline_info_keyboard)
+        if info['message_text'] == '/start' or 'привет' in info['message_text']:
+            welcoming_self(bot, WELCOMING_AND_TUTORING, info, main_keyboard)
+        elif 'о проекте' in info['message_text']:
+            about_project_self(bot, QUESTIONS, info, inline_info_keyboard)
+        elif 'анкета' in info['message_text']:
+            pass
 
 
 def handle_query(update: Update, call: CallbackContext):

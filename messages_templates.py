@@ -5,7 +5,7 @@ USER_JOINED_ADDITIONS = ['Нажми на фото моего профиля и 
                          'и пиши в личные сообщения 😌🔥']
 USER_JOINED_WITHOUT_UN = '{} только что присоединился к нам! Рад тебя видеть в нашем чате! '
 
-WELCOMING_AND_TUTORING = 'Привет! Нажми на одну из кнопок, чтобы узнать о проекте!\n'
+WELCOMING_AND_TUTORING = 'Привет! Нажми на одну из кнопок, чтобы пройти анкету или узнать о проекте!\n'
 QUESTIONS = '1️⃣ - Какая главная цель проекта?\n' \
                          '2️⃣ - Зачем тебе нужно закаливание?\n' \
             '3️⃣ - Как закаливание поможет тебе в повседневной жизни?\n' \
@@ -32,3 +32,8 @@ PHOTO_IDS = {'1': 'AgACAgIAAxkBAAOZYYlo5MGblYciKa7IGFAK6BEBO1cAAme4MRucb0lIgATgx
              '2': 'AgACAgIAAxkBAAOaYYlpAZuxxg7EI15WotcfCplhsUMAAmi4MRucb0lI5girqil_WKgBAAMCAANzAAMiBA',
              '3': 'AgACAgIAAxkBAAOdYYlpfof5oPxytaULPuaN-RSUfxoAAm24MRucb0lIZiYWMB-_1woBAAMCAAN5AAMiBA',
              '4': 'AgACAgIAAxkBAAOcYYlpMzv_lktfFz7YygbmjtzRkUcAAmu4MRucb0lIpwqQ6CyKxv4BAAMCAANzAAMiBA'}
+
+MAIN_KEYBOARD_TEXT = {
+    '1': 'Анкета',
+    '2': 'О проекте'
+}

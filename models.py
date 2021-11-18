@@ -7,6 +7,7 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.cold_tg_bot
 users_collection = db.users
+questionnaire_collection = db.questionnaire_collection
 
 
 class User:
@@ -51,7 +52,7 @@ class User:
 
         return self._id
 
-    def update(self, new_values: dict):
+    def update(self, new_values: dict) -> None:
         if new_values:
             users_collection.update_one({'_id': self._id}, {'$set': new_values}, upsert=False)
             self.__init__(document_id=self._id)
@@ -69,5 +70,37 @@ class User:
             'first_name': self.first_name,
             'last_name': self.last_name,
             'date_of_last_msg': self.date_of_last_msg
+        }
+        return result_dict
+
+
+class Questionnaire:
+    _id: ObjectId
+    user_id: ObjectId
+    q_1: str
+    q_2: str
+    q_3: str
+
+    def __init__(self, user_id: ObjectId, q_1: str, q_2: str, q_3: str):
+        self.user_id = user_id
+        self.q_1 = q_1
+        self.q_2 = q_2
+        self.q_3 = q_3
+
+    def insert(self):
+        insertion = questionnaire_collection.insert_one(self.__dict__())
+
+        if not self._id:
+            self._id = insertion.inserted_id
+
+        return self._id
+
+    def __dict__(self) -> dict:
+        result_dict = {
+            '_id': self._id,
+            'user_id': self.user_id,
+            'q_1': self.q_1,
+            'q_2': self.q_2,
+            'q_3': self.q_3
         }
         return result_dict
