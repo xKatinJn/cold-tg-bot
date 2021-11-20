@@ -76,16 +76,19 @@ class User:
 
 class Questionnaire:
     _id: ObjectId
-    user_id: ObjectId
+    is_agree: bool
+    in_process: bool
     q_1: str
     q_2: str
     q_3: str
 
-    def __init__(self, user_id: ObjectId, q_1: str, q_2: str, q_3: str):
-        self.user_id = user_id
+    def __init__(self, _id: str, q_1: str, q_2: str, q_3: str, is_agree: bool, in_process: bool):
+        self._id = _id
         self.q_1 = q_1
         self.q_2 = q_2
         self.q_3 = q_3
+        self.is_agree = is_agree
+        self.in_process = in_process
 
     def insert(self):
         insertion = questionnaire_collection.insert_one(self.__dict__())
@@ -95,10 +98,31 @@ class Questionnaire:
 
         return self._id
 
+    def update(self, new_values: dict) -> None:
+        if new_values:
+            questionnaire_collection.update_one({'_id': self._id}, {'$set': new_values}, upsert=False)
+            self.__init__(**self.get_document_by_user_id(self._id))
+        else:
+            raise Exception('new_values variable could not be None')
+
+    def get_unfilled_question(self) -> str:
+        if not self.q_1:
+            return '1'
+        if not self.q_2:
+            return '2'
+        if not self.q_3:
+            return '3'
+        return '0'
+
+    @staticmethod
+    def get_document_by_user_id(user_id: str):
+        return questionnaire_collection.find_one({'_id': user_id})
+
     def __dict__(self) -> dict:
         result_dict = {
             '_id': self._id,
-            'user_id': self.user_id,
+            'is_agree': self.is_agree,
+            'in_process': self.in_process,
             'q_1': self.q_1,
             'q_2': self.q_2,
             'q_3': self.q_3

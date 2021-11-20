@@ -1,4 +1,4 @@
-from messages_templates import OPTIONS_NUMS, MAIN_KEYBOARD_TEXT
+from messages_templates import OPTIONS_NUMS, MAIN_KEYBOARD_TEXT, YES_NO_KEYBOARD_TEXT
 
 from telegram import KeyboardButton, ReplyKeyboardRemove, ReplyKeyboardMarkup, InlineKeyboardButton, \
     InlineKeyboardMarkup
@@ -18,6 +18,14 @@ main_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text=MAIN_KEYBOARD_TEXT['1']),
          KeyboardButton(text=MAIN_KEYBOARD_TEXT['2'])]
+    ],
+    resize_keyboard=True
+)
+
+yes_no_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text=YES_NO_KEYBOARD_TEXT['1']),
+         KeyboardButton(text=YES_NO_KEYBOARD_TEXT['2'])],
     ],
     resize_keyboard=True
 )

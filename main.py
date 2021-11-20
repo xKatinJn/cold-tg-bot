@@ -5,15 +5,20 @@ from datetime import datetime
 
 from pprint import pprint
 
-from models import User
-from common_utils import update_to_dict, private_chat_to_user_model
+from models import User, Questionnaire
+from common_utils import update_to_dict, private_chat_to_user_model, set_in_process_questionnaire
 from messages_templates import USER_JOINED, USER_JOINED_WITHOUT_UN, WELCOMING_AND_TUTORING, OPTIONS_TEXTS, \
     MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS, PHOTO_IDS
 from keyboards import inline_info_keyboard, main_keyboard
-from chatting import welcoming_self, about_project_self
+from chatting import welcoming_self, about_project_self, questionnaire_self
 
 from telegram import Bot, Update, InputMediaPhoto
 from telegram.ext import Updater, MessageHandler, CallbackContext, Filters, CallbackQueryHandler
+
+
+# TODO: save answers on questions
+# TODO: update answers on questions
+# TODO: send answers in special chat
 
 
 API_TOKEN = os.getenv('BOT_API_TOKEN')
@@ -64,10 +69,42 @@ def message_handler(update: Update, context: CallbackContext) -> None:
         # first join
         if info['message_text'] == '/start' or 'привет' in info['message_text']:
             welcoming_self(bot, WELCOMING_AND_TUTORING, info, main_keyboard)
+
+        elif info['questionnaire_document'].in_process:
+            if info['message_text'] == 'продолжить':
+                set_in_process_questionnaire(info, True)
+                questionnaire_self(bot, info, is_first=False, is_agree=True, is_continue=True)
+
+            elif info['message_text'] == 'отмена':
+                set_in_process_questionnaire(info, False)
+                welcoming_self(bot, WELCOMING_AND_TUTORING, info, main_keyboard)
+
+            else:
+                questionnaire_self(bot, info, is_first=False, is_agree=True, is_continue=False, in_process=True)
+
         elif 'о проекте' in info['message_text']:
             about_project_self(bot, QUESTIONS, info, inline_info_keyboard)
+
         elif 'анкета' in info['message_text']:
-            pass
+            # adding new questionnaire
+            if not Questionnaire.get_document_by_user_id(user_info['_id']):
+                user_questionnaire = {
+                    '_id': user_info['_id'],
+                    'is_agree': False,
+                    'in_process': True,
+                    'q_1': '',
+                    'q_2': '',
+                    'q_3': ''
+                }
+                Questionnaire(**user_questionnaire).insert()
+            else:
+                set_in_process_questionnaire(info, True)
+
+            if info['chat']['id'] == Questionnaire.get_document_by_user_id(info['chat']['id']):
+                questionnaire_self(bot, info, False)
+            else:
+                questionnaire_self(bot, info, True)
+
 
 
 def handle_query(update: Update, call: CallbackContext):
