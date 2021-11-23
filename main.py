@@ -136,6 +136,8 @@ def handle_query(update: Update, call: CallbackContext):
 
 def start() -> None:
     logging.basicConfig(
+        filename='logs.log',
+        filemode='a',
         level=logging.DEBUG,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
