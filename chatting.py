@@ -59,8 +59,6 @@ def questionnaire_self(bot: Bot, info: dict, is_first: bool, is_agree: bool = No
 
 
 def about_project_self(bot: Bot, text: str, info: dict, keyboard) -> None:
-    photo = open(f'1.jpg', 'rb').read()
-
     bot.send_photo(
         chat_id=info['chat']['id'],
         photo=PHOTO_IDS['1'],
