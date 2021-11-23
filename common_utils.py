@@ -1,6 +1,6 @@
 from telegram import Update
 from models import Questionnaire
-from messages_templates import QUESTIONNAIRE_SELF_QUESTIONS
+from messages_templates import QUESTIONNAIRE_SELF_QUESTIONS, QUESTIONNAIRE_RESULT
 
 
 def update_to_dict(update: Update) -> dict:
@@ -20,10 +20,12 @@ def update_to_dict(update: Update) -> dict:
 
     try:
         questionnaire_document = Questionnaire(**Questionnaire.get_document_by_user_id(chat.id))
-        result.update({'questionnaire_document': questionnaire_document})
+        result.update({'questionnaire_exist': True})
     except TypeError:
         questionnaire_document = None
+        result.update({'questionnaire_exist': False})
     result.update({'questionnaire_document': questionnaire_document})
+
     return result
 
 
@@ -51,3 +53,16 @@ def get_unfilled_question_text(info: dict) -> str:
         return QUESTIONNAIRE_SELF_QUESTIONS[num]
     else:
         return ''
+
+
+def prepare_questionnaire_result(info: dict) -> str:
+    quest_obj: Questionnaire = info['questionnaire_document']
+
+    result = QUESTIONNAIRE_RESULT.format(quest_obj.q_1, info['chat']['username'], quest_obj.q_4) + '\n'
+
+    for i in range(2, 4):
+        quest = QUESTIONNAIRE_SELF_QUESTIONS[str(i)]
+        ans = quest_obj.__getattribute__(f'q_{i}')
+        result += f'Вопрос: "{quest}"\n\nОтвет: {ans}\n\n'
+
+    return result

@@ -81,12 +81,14 @@ class Questionnaire:
     q_1: str
     q_2: str
     q_3: str
+    q_4: str
 
-    def __init__(self, _id: str, q_1: str, q_2: str, q_3: str, is_agree: bool, in_process: bool):
+    def __init__(self, _id: str, q_1: str, q_2: str, q_3: str, q_4: str, is_agree: bool, in_process: bool):
         self._id = _id
         self.q_1 = q_1
         self.q_2 = q_2
         self.q_3 = q_3
+        self.q_4 = q_4
         self.is_agree = is_agree
         self.in_process = in_process
 
@@ -112,6 +114,8 @@ class Questionnaire:
             return '2'
         if not self.q_3:
             return '3'
+        if not self.q_4:
+            return '4'
         return '0'
 
     @staticmethod
@@ -125,6 +129,7 @@ class Questionnaire:
             'in_process': self.in_process,
             'q_1': self.q_1,
             'q_2': self.q_2,
-            'q_3': self.q_3
+            'q_3': self.q_3,
+            'q_4': self.q_4
         }
         return result_dict

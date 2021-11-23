@@ -8,7 +8,7 @@ from pprint import pprint
 from models import User, Questionnaire
 from common_utils import update_to_dict, private_chat_to_user_model, set_in_process_questionnaire
 from messages_templates import USER_JOINED, USER_JOINED_WITHOUT_UN, WELCOMING_AND_TUTORING, OPTIONS_TEXTS, \
-    MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS, PHOTO_IDS
+    MORE_QUESTIONS, QUESTIONS, USER_JOINED_ADDITIONS, PHOTO_IDS, TUTORING, ALREADY_FILLED
 from keyboards import inline_info_keyboard, main_keyboard
 from chatting import welcoming_self, about_project_self, questionnaire_self
 
@@ -66,21 +66,22 @@ def message_handler(update: Update, context: CallbackContext) -> None:
             new_user = User(dict=user_info)
             new_user.insert()
 
+        if info['questionnaire_exist']:
+            if info['questionnaire_document'].in_process:
+                if info['message_text'] == 'продолжить':
+                    questionnaire_self(bot, info, is_first=False, is_agree=True, is_continue=True)
+                    return
+                elif info['message_text'] == 'отмена':
+                    set_in_process_questionnaire(info, False)
+                    welcoming_self(bot, WELCOMING_AND_TUTORING, info, main_keyboard)
+                    return
+                else:
+                    questionnaire_self(bot, info, is_first=False, is_agree=True, is_continue=False, in_process=True)
+                    return
+
         # first join
         if info['message_text'] == '/start' or 'привет' in info['message_text']:
             welcoming_self(bot, WELCOMING_AND_TUTORING, info, main_keyboard)
-
-        elif info['questionnaire_document'].in_process:
-            if info['message_text'] == 'продолжить':
-                set_in_process_questionnaire(info, True)
-                questionnaire_self(bot, info, is_first=False, is_agree=True, is_continue=True)
-
-            elif info['message_text'] == 'отмена':
-                set_in_process_questionnaire(info, False)
-                welcoming_self(bot, WELCOMING_AND_TUTORING, info, main_keyboard)
-
-            else:
-                questionnaire_self(bot, info, is_first=False, is_agree=True, is_continue=False, in_process=True)
 
         elif 'о проекте' in info['message_text']:
             about_project_self(bot, QUESTIONS, info, inline_info_keyboard)
@@ -94,9 +95,17 @@ def message_handler(update: Update, context: CallbackContext) -> None:
                     'in_process': True,
                     'q_1': '',
                     'q_2': '',
-                    'q_3': ''
+                    'q_3': '',
+                    'q_4': ''
                 }
-                Questionnaire(**user_questionnaire).insert()
+                questionnaire = Questionnaire(**user_questionnaire)
+                questionnaire.insert()
+                info.update({'questionnaire_document': questionnaire})
+
+            elif info['questionnaire_document'].get_unfilled_question() == '0':
+                set_in_process_questionnaire(info, False)
+                welcoming_self(bot, ALREADY_FILLED + TUTORING, info, main_keyboard)
+                return
             else:
                 set_in_process_questionnaire(info, True)
 
@@ -104,7 +113,6 @@ def message_handler(update: Update, context: CallbackContext) -> None:
                 questionnaire_self(bot, info, False)
             else:
                 questionnaire_self(bot, info, True)
-
 
 
 def handle_query(update: Update, call: CallbackContext):
