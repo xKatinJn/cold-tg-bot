@@ -1,7 +1,7 @@
 from telegram import Bot
 
 from messages_templates import QUESTIONNAIRE_PERSONAL_DATA, QUESTIONNAIRE_SELF_QUESTIONS, FILLED_SUCCESSFULLY, ADMINS, \
-    TUTORING
+    TUTORING, PHOTO_IDS
 
 from keyboards import yes_no_keyboard, main_keyboard
 from common_utils import get_unfilled_question_text, set_in_process_questionnaire, prepare_questionnaire_result
@@ -63,7 +63,7 @@ def about_project_self(bot: Bot, text: str, info: dict, keyboard) -> None:
 
     bot.send_photo(
         chat_id=info['chat']['id'],
-        photo=photo,
+        photo=PHOTO_IDS['1'],
         caption=text,
         reply_markup=keyboard
     )
