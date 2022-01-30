@@ -4,7 +4,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 
 
-client = MongoClient('localhost', 27017)
+client = MongoClient(host='mongodb://root:example@mongo:27017/')
 db = client.cold_tg_bot
 users_collection = db.users
 questionnaire_collection = db.questionnaire_collection

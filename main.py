@@ -16,11 +16,6 @@ from telegram import Bot, Update, InputMediaPhoto
 from telegram.ext import Updater, MessageHandler, CallbackContext, Filters, CallbackQueryHandler
 
 
-# TODO: save answers on questions
-# TODO: update answers on questions
-# TODO: send answers in special chat
-
-
 API_TOKEN = os.getenv('BOT_API_TOKEN')
 
 bot = Bot(token=API_TOKEN)
